@@ -1,0 +1,95 @@
+using WooldridgeDatasets, GLM , DataFrames
+
+df= DataFrame(wooldridge("rdchem"))
+
+reg= lm(@formula( rdintens ~ log(sales) + profmarg ) , df)
+
+table_coef = coeftable(reg)
+
+println("tabela de coeficientes : \n$table_reg")
+
+b = coef(reg)
+se = stderror(reg)
+
+
+tstat = round.(b ./ se, digits=5)
+println("tstat = $tstat\n")
+
+
+pval = round.( cdf.(TDist(29), -abs.(tstat)), digits=5)
+println("pval = $pval")
+
+###############################################
+
+gpa1 = DataFrame(wooldridge("gpa1"))
+
+
+reg = lm(@formula(colGPA ~ hsGPA + ACT + skipped), gpa1)
+table_reg = coeftable(reg)
+println("table_reg: \n$table_reg\n")
+
+b = coef(reg)
+se = stderror(reg)
+
+tstat = round.(b ./ se, digits=5)
+println("tstat = $tstat\n")
+
+CI95_upper = coef(reg) .+ stderror(reg) .* quantile(TDist(137), alpha / 2)
+CI95_lower = coef(reg) .- stderror(reg) .* quantile(TDist(137), alpha / 2)
+
+
+tstat = round.(( b- 0.4 ) ./ se, digits=5)
+println("tstat = $tstat\n")
+
+
+pval = round.( 2 * cdf.(TDist(137), -abs.(tstat)), digits=5)
+println("pval = $pval")
+
+
+
+tstat = round.(( b- 1 ) ./ se, digits=5)
+println("tstat = $tstat\n")
+
+
+pval = round.( 2 * cdf.(TDist(137), -abs.(tstat)), digits=5)
+println("pval = $pval")
+
+
+modeloi = lm(colGPA ~ hsGPA + ACT + skipped), gpa1)
+modelor = lm(colGPA ~ hsGPA ), gpa1)
+anova(modelor, modeloi)
+
+#################################################
+
+
+
+wage2 = DataFrame(wooldridge("wage2"))
+
+
+reg = lm(@formula(log(wage) = educ + exper + tenure ,wage2)
+
+
+table_reg = coeftable(reg)
+println("table_reg: \n$table_reg\n")
+
+modeloi = lm(log(wage) = educ + exper + tenure ,wage2)
+modelor = lm(log(wage) = tenure ,wage2)
+anova(modelor, modeloi)
+
+######################################################
+
+
+htv = DataFrame(wooldridge("htv"))
+
+modeloi = lm(educ = motheduc + fatheduc + abil + (abil^2))
+modelor = lm(educ = motheduc + fatheduc + abil)
+anova(modelor, modeloi)
+
+
+modeloi = lm(educ =  motheduc + fatheduc + abil + (abil^2))
+modelor = lm(educ =  abil + (abil^2))
+anova(modelor, modeloi)
+
+
+
+
