@@ -13,4 +13,8 @@ variancia_1 = inv( *(X',X))
 
 variancia_2 = *(*(*(inv( *(X',X)) ,X'), sigma),*(X,inv( *(X',X)) ) )
 
-display(variancia_2)
+function estimador_w(X,beta,sigma)
+  estimador = *(X', *(sigma , X))
+  return estimador
+end
+
